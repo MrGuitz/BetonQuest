@@ -203,10 +203,12 @@ import org.betonquest.betonquest.objectives.SmeltingObjective;
 import org.betonquest.betonquest.objectives.StepObjective;
 import org.betonquest.betonquest.objectives.TameObjective;
 import org.betonquest.betonquest.objectives.VariableObjective;
+import org.betonquest.betonquest.quest.event.NullStaticEventFactory;
 import org.betonquest.betonquest.quest.event.journal.JournalEventFactory;
 import org.betonquest.betonquest.quest.event.legacy.FromClassQuestEventFactory;
 import org.betonquest.betonquest.quest.event.legacy.QuestEventFactory;
 import org.betonquest.betonquest.quest.event.legacy.QuestEventFactoryAdapter;
+import org.betonquest.betonquest.quest.event.velocity.VelocityEventFactory;
 import org.betonquest.betonquest.utils.PlayerConverter;
 import org.betonquest.betonquest.utils.Utils;
 import org.betonquest.betonquest.variables.ConditionVariable;
@@ -803,6 +805,7 @@ public class BetonQuest extends JavaPlugin {
         registerEvents("notifyall", NotifyAllEvent.class);
         registerEvents("chat", ChatEvent.class);
         registerEvents("freeze", FreezeEvent.class);
+        registerEvent("velocity", new VelocityEventFactory(getServer(), getServer().getScheduler(), this));
 
         // register objectives
         registerObjectives("location", LocationObjective.class);
@@ -1314,10 +1317,22 @@ public class BetonQuest extends JavaPlugin {
     }
 
     /**
-     * Registers an event with its name and a factory to create new instances of the event.
+     * Registers an event that does not support static execution with its name
+     * and a factory to create new normal instances of the event.
      *
-     * @param name name of the event
+     * @param name         name of the event
      * @param eventFactory factory to create the event
+     */
+    public void registerEvent(final String name, final EventFactory eventFactory) {
+        registerEvent(name, eventFactory, new NullStaticEventFactory());
+    }
+
+    /**
+     * Registers an event with its name and two factories to create normal and
+     * static instances of the event.
+     *
+     * @param name               name of the event
+     * @param eventFactory       factory to create the event
      * @param staticEventFactory factory to create the static event
      */
     public void registerEvent(final String name, final EventFactory eventFactory, final StaticEventFactory staticEventFactory) {

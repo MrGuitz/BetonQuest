@@ -44,6 +44,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `bossbar` notify style now supports variables for the `progress` argument
 - `delay` objective property: `rawSeconds`
 - `fish` objective now has `hookLocation` and `range` settings.
+- `velocity` event - throws the player by a vector (can be variable) with a direction and modification
 - Things that are also added in 1.12.X:
     - new line support for `journal_lore` in `messages.yml`
     - FastAsyncWorldEdit compatibility
