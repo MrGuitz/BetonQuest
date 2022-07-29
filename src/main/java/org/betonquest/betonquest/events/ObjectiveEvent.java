@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;
 import org.betonquest.betonquest.api.QuestEvent;
+import org.betonquest.betonquest.api.profiles.Profile;
 import org.betonquest.betonquest.database.Connector;
 import org.betonquest.betonquest.database.PlayerData;
 import org.betonquest.betonquest.database.Saver;
@@ -42,11 +43,11 @@ public class ObjectiveEvent extends QuestEvent {
 
     @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidLiteralsInIfCondition", "PMD.CognitiveComplexity"})
     @Override
-    protected Void execute(final String playerID) throws QuestRuntimeException {
+    protected Void execute(final Profile profile) throws QuestRuntimeException {
         if (BetonQuest.getInstance().getObjective(objective) == null) {
             throw new QuestRuntimeException("Objective '" + objective + "' is not defined, cannot run objective event");
         }
-        if (playerID == null) {
+        if (profile == null) {
             if ("delete".equals(action) || "remove".equals(action)) {
                 for (final Player p : Bukkit.getOnlinePlayers()) {
                     final PlayerData playerData = BetonQuest.getInstance().getPlayerData(PlayerConverter.getID(p));
@@ -56,11 +57,11 @@ public class ObjectiveEvent extends QuestEvent {
             } else {
                 LOG.warn(instruction.getPackage(), "You tried to call an objective add / finish event in a static context! Only objective delete works here.");
             }
-        } else if (PlayerConverter.getPlayer(playerID) == null) {
+        } else if (profile.getPlayer() == null) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    final PlayerData playerData = new PlayerData(playerID);
+                    final PlayerData playerData = new PlayerData(profile);
                     switch (action.toLowerCase(Locale.ROOT)) {
                         case "start":
                         case "add":
@@ -83,16 +84,16 @@ public class ObjectiveEvent extends QuestEvent {
             switch (action.toLowerCase(Locale.ROOT)) {
                 case "start":
                 case "add":
-                    BetonQuest.newObjective(playerID, objective);
+                    BetonQuest.newObjective(profile, objective);
                     break;
                 case "delete":
                 case "remove":
-                    BetonQuest.getInstance().getObjective(objective).cancelObjectiveForPlayer(playerID);
-                    BetonQuest.getInstance().getPlayerData(playerID).removeRawObjective(objective);
+                    BetonQuest.getInstance().getObjective(objective).cancelObjectiveForPlayer(profile);
+                    BetonQuest.getInstance().getPlayerData(profile).removeRawObjective(objective);
                     break;
                 case "complete":
                 case "finish":
-                    BetonQuest.getInstance().getObjective(objective).completeObjective(playerID);
+                    BetonQuest.getInstance().getObjective(objective).completeObjective(profile);
                     break;
                 default:
                     break;

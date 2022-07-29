@@ -5,6 +5,7 @@ import org.betonquest.betonquest.BetonQuest;
 import org.betonquest.betonquest.Instruction;
 import org.betonquest.betonquest.VariableNumber;
 import org.betonquest.betonquest.api.Objective;
+import org.betonquest.betonquest.api.profiles.Profile;
 import org.betonquest.betonquest.exceptions.InstructionParseException;
 import org.betonquest.betonquest.exceptions.QuestRuntimeException;
 import org.betonquest.betonquest.utils.PlayerConverter;
@@ -36,13 +37,13 @@ public class LocationObjective extends Objective implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onMove(final PlayerMoveEvent event) {
         qreHandler.handle(() -> {
-            final String playerID = PlayerConverter.getID(event.getPlayer());
-            final Location location = loc.getLocation(playerID);
+            final Profile profile = PlayerConverter.getID(event.getPlayer());
+            final Location location = loc.getLocation(profile);
             final Location toLocation = event.getTo();
-            if (containsPlayer(playerID) && toLocation.getWorld().equals(location.getWorld())) {
-                final double pRange = range.getDouble(playerID);
-                if (toLocation.distanceSquared(location) <= pRange * pRange && super.checkConditions(playerID)) {
-                    completeObjective(playerID);
+            if (containsPlayer(profile) && toLocation.getWorld().equals(location.getWorld())) {
+                final double pRange = range.getDouble(profile);
+                if (toLocation.distanceSquared(location) <= pRange * pRange && super.checkConditions(profile)) {
+                    completeObjective(profile);
                 }
             }
         });
@@ -64,11 +65,11 @@ public class LocationObjective extends Objective implements Listener {
     }
 
     @Override
-    public String getProperty(final String name, final String playerID) {
+    public String getProperty(final String name, final Profile profile) {
         if ("location".equalsIgnoreCase(name)) {
             final Location location;
             try {
-                location = loc.getLocation(playerID);
+                location = loc.getLocation(profile);
             } catch (final QuestRuntimeException e) {
                 LOG.warn(instruction.getPackage(), "Error while getting location property in '" + instruction.getID() + "' objective: "
                         + e.getMessage(), e);
