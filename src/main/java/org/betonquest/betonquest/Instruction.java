@@ -17,6 +17,7 @@ import org.betonquest.betonquest.instruction.tokenizer.TokenizerException;
 import org.betonquest.betonquest.instruction.variable.Variable;
 import org.betonquest.betonquest.instruction.variable.VariableNumber;
 import org.betonquest.betonquest.instruction.variable.location.VariableLocation;
+import org.betonquest.betonquest.instruction.variable.selector.NumberSelector;
 import org.betonquest.betonquest.item.QuestItem;
 import org.betonquest.betonquest.utils.BlockSelector;
 import org.bukkit.Material;
@@ -334,6 +335,23 @@ public class Instruction {
             return new VariableNumber(pack, string, valueChecker);
         } catch (final InstructionParseException e) {
             throw new PartParseException("Could not parse a number: " + e.getMessage(), e);
+        }
+    }
+
+    public NumberSelector getSelector() throws InstructionParseException {
+        return getSelector(next());
+    }
+
+    @Contract("null -> null; !null -> !null")
+    @Nullable
+    public NumberSelector getSelector(@Nullable final String string) throws InstructionParseException {
+        if (string == null) {
+            return null;
+        }
+        try {
+            return NumberSelector.parse(string, this);
+        } catch (final InstructionParseException e) {
+            throw new PartParseException("Could not parse selector: " + e.getMessage(), e);
         }
     }
 

@@ -30,7 +30,11 @@ public enum Operation {
     /**
      * Checks if the first number is greater than the second.
      */
-    GREATER((first, second) -> first > second);
+    GREATER((first, second) -> first > second),
+    /**
+     * Checks if the first number is a multiple of the second.
+     */
+    MODULO((first, second) -> first % second == 0);
 
     /**
      * The compare to use for this operation.
